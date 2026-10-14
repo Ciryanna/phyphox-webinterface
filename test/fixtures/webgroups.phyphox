@@ -1,8 +1,9 @@
 <phyphox xmlns="http://phyphox.org/xml" version="1.21" locale="en">
     <!-- Web interface test fixture for view groups (file format 1.21): the "Groups" view of test/mock_server.js with
          the same labels, buffer names and settings, so test/webinterface.test.js finds the same elements against the
-         mock and against an app serving this file. The images (face.png, needle.png next to this file) reach the app
-         only inside a zip container with the two PNGs in res/, as bare XML they show "Image not available". -->
+         mock and against an app serving this file. The images (face.png, needle.png, mode-light.png, mode-dark.png next to
+         this file) reach the app only inside a zip container with the PNGs in res/, as bare XML they show "Image not
+         available". -->
     <title>Web interface: groups</title>
     <category>phyphox test</category>
     <description>View groups, transforms, an alpha colour and a fixed plot area for the remote interface tests.</description>
@@ -88,6 +89,8 @@
                 <graph label="Overlay" labelX="bin" labelY="count" plotLeft="0.1" plotTop="0.1" plotRight="0.9" plotBottom="0.9" color="ff7e2280"><input axis="x">hx</input><input axis="y">hy</input></graph>
             </stack>
             <value label="Alpha value" color="ff7e2280"><input>value</input></value>
+            <image src="face.png" lightSrc="mode-light.png" darkSrc="mode-dark.png" />
+            <image src="face.png" darkSrc="mode-dark.png" />
         </view>
     </views>
     <export></export>

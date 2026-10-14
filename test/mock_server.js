@@ -202,9 +202,12 @@ function infoElement(label, index) {
     html: `<div style="font-size:89%;color:#ffffff;" class="infoElement adjustableColor" id="element${index}"><p>${label}</p></div>`,
     dataCompleteFunction: 'function() {}'};
 }
-function imageElement(index, src) {
+// lightSrc/darkSrc (file format 1.21, readme.md "Image elements"): both data attributes, resolved to src where absent
+function imageElement(index, src, lightSrc, darkSrc) {
+  const res = f => `res?src=${encodeURIComponent(f)}`;
+  const modes = (lightSrc || darkSrc) ? ` data-light-src="${res(lightSrc || src)}" data-dark-src="${res(darkSrc || src)}"` : '';
   return {label: '', index: String(index), updateMode: 'none', labelSize: '42',
-    html: `<div class="imageElement" id="element${index}"><img style="width: 100%" class="lightFilter_none darkFilter_none" src="res?src=${encodeURIComponent(src)}"></div>`,
+    html: `<div class="imageElement" id="element${index}"><img style="width: 100%" class="lightFilter_none darkFilter_none" src="${res(src)}"${modes}></div>`,
     dataCompleteFunction: 'function() {}'};
 }
 // The drawing elements (file format 1.21, readme.md "Drawing elements"): every key present, the defaults of the file format
@@ -331,7 +334,10 @@ const views = [
       ]}),
       graph('Overlay', 26, 'full', ['hy', 'hx'], base({labelX: 'bin', labelY: 'count', plotLeft: 0.1, plotTop: 0.1, plotRight: 0.9, plotBottom: 0.9, datasets: [line('hx', 'hy', '#ff7e2280')]}))
     ]),
-    valueElement('Alpha value', 27, 'value', '', 2, 'ff7e2280')
+    valueElement('Alpha value', 27, 'value', '', 2, 'ff7e2280'),
+    // a file per mode, and a dark file only (light mode shows src)
+    imageElement(73, 'face.png', 'mode-light.png', 'mode-dark.png'),
+    imageElement(74, 'face.png', null, 'mode-dark.png')
   ]},
   // The drawing elements (file format 1.21); mirrors the "Drawing" view of fixtures/webgraphs.phyphox, which in turn
   // follows phyphox-docs corpus/generated/view-drawing.phyphox plus a convertible scale under a needle

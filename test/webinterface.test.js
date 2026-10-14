@@ -680,6 +680,46 @@ test('view groups: a horizontal splits the row by weight, a grid picks its colum
   assertNoErrors();
 });
 
+test('image: lightSrc and darkSrc pick the file of the bright mode and follow the toggle, src where one is absent', async t => {
+  if (!(await requireView(t, 'Groups'))) return;
+  const imgs = () => page.evaluate(() => Array.from(document.querySelectorAll('#views .imageElement img')).map(i => ({
+    src: decodeURIComponent((i.getAttribute('src') || '').replace(/^res\?src=/, '')), modes: i.hasAttribute('data-dark-src'),
+    w: i.naturalWidth, h: i.naturalHeight, aspect: i.offsetWidth / i.offsetHeight})));
+  const pick = list => { const m = list.filter(i => i.modes); return {both: m[0], dark: m[1], plain: list.find(i => !i.modes)}; };
+  const setBright = async on => {
+    if (await page.evaluate(() => brightMode) !== on) await page.evaluate(() => toggleBrightMode());
+    await sleep(600);
+  };
+  const startBright = await page.evaluate(() => brightMode);
+  try {
+    await setBright(false);
+    let p = pick(await imgs());
+    if (!p.both || !p.dark) { t.skip('no image with lightSrc/darkSrc in the served experiment'); return; }
+    assert.equal(p.both.src, 'mode-dark.png', 'dark mode: darkSrc');
+    assert.equal(p.dark.src, 'mode-dark.png', 'dark mode: darkSrc of the element without lightSrc');
+    assert.equal(p.plain.src, 'face.png', 'markup without data attributes keeps its src');
+    await setBright(true);
+    p = pick(await imgs());
+    assert.equal(p.both.src, 'mode-light.png', 'bright mode: lightSrc');
+    assert.equal(p.dark.src, 'face.png', 'bright mode without lightSrc: src');
+    assert.equal(p.plain.src, 'face.png');
+    if (!DEVICE) {
+      // the mock serves the fixtures: the chosen file loaded, and the box follows its aspect (8x4 against the 200x120 face)
+      assert.ok(p.both.w === 8 && p.both.h === 4, 'mode-light.png loaded via /res');
+      assert.ok(p.dark.w === 200 && p.dark.h === 120, 'face.png loaded via /res');
+      near(p.both.aspect, 2, 0.05, 'box of mode-light.png');
+      near(p.dark.aspect, 200 / 120, 0.05, 'box of face.png');
+    }
+    await setBright(false);
+    p = pick(await imgs());
+    assert.equal(p.both.src, 'mode-dark.png', 'back in dark mode');
+    assert.equal(p.dark.src, 'mode-dark.png', 'back in dark mode');
+  } finally {
+    await setBright(startBright);
+  }
+  assertNoErrors();
+});
+
 test('transform: a bound container drives the wrapped element through the range map with clamp, a constant scales, an empty or NaN container is neutral', async t => {
   if (!(await requireView(t, 'Groups'))) return;
   const needle = '#views .group_stack > .group_transform:nth-of-type(2)';

@@ -238,6 +238,33 @@ the stack and everything in it are `pointer-events: none`, the hit box alone is 
 reaches it even under a transformed needle drawn later, and a click anywhere else on the stack does
 nothing. A scale inside a transform gets no hit box.
 
+### Image elements
+
+The image element has no configuration object; its `html` is
+
+```html
+<div class="imageElement" id="element12"><img style="width: 50%" class="lightFilter_none darkFilter_invert" src="res?src=circuit.png"></div>
+```
+
+with the `width` from the `scale` attribute and the two filter classes, which `style.css` applies
+according to the bright mode. The file name is URL-encoded as the `src` query value of `/res`.
+
+File format 1.21 adds `lightSrc` and `darkSrc`, a file shown instead of `src` in light or dark mode
+(phyphox-docs `docs/file-format/views/basics.md`, "Images for light and dark mode"). When the
+element has at least one of them, the `<img>` carries both choices, each already resolved to `src`
+where the alternative is absent:
+
+```html
+<img style="width: 100%" class="lightFilter_none darkFilter_none" src="res?src=circuit.png" data-light-src="res?src=circuit.png" data-dark-src="res?src=circuit-dark.png">
+```
+
+`src` stays the file of `src`. The interface sets the `src` from `data-light-src` in bright mode and
+from `data-dark-src` otherwise before the markup is inserted, so only the file shown is loaded, and
+again on every toggle of the bright mode (the views are rebuilt). It follows its own bright mode
+switch, not the mode of the app. An element without either alternative omits both data attributes,
+and markup without them is used as it is. Every named file is a resource the app serves through
+`/res`.
+
 ### The graph configuration
 
 All keys are always present (use `null` for "not set"), booleans are booleans, numbers are numbers:

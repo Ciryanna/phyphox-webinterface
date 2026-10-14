@@ -1464,12 +1464,27 @@
         return (ve.spacing > 0) ? ve.spacing : 0;
     }
 
+    //An image with a file per mode (lightSrc/darkSrc, file format 1.21) gets the one of the bright mode before it loads.
+    //The template is inert, so the src from the app is never fetched; markup without the data attributes stays as it is.
+    function modeImageHTML(html) {
+        if (html.indexOf("data-light-src") < 0 && html.indexOf("data-dark-src") < 0)
+            return html;
+        const t = document.createElement("template");
+        t.innerHTML = html;
+        t.content.querySelectorAll("img").forEach(function(img) {
+            const src = img.getAttribute(brightMode ? "data-light-src" : "data-dark-src");
+            if (src)
+                img.setAttribute("src", src);
+        });
+        return t.innerHTML;
+    }
+
     //The markup of a leaf, or of a group with its children. Groups are plain containers styled by their class;
     //the per-child styles (weights, grid columns) are applied by layoutGroups once the nodes exist. A spacing
     //becomes the flex gap, which only separates rendered children: no gap at the edges or next to a hidden child.
     function elementHTML(ve) {
         if (!ve.elements)
-            return ve.html;
+            return modeImageHTML(ve.html);
         let style = "";
         if (ve.type == "transform")
             style = "transform-origin: " + (100 * (ve.originX != null ? ve.originX : 0.5)) + "% " + (100 * (ve.originY != null ? ve.originY : 0.5)) + "%;";
