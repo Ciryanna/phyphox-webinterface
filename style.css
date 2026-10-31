@@ -31,7 +31,7 @@ ul {
     top: 0;
     z-index: 1000;
     white-space: nowrap;
-    background-color: #ff7e22;
+    background-color: #9B6DFF;
     box-shadow: 0 0.2em 0.2em rgba(0, 0, 0, 0.2);
 }
 
@@ -58,7 +58,7 @@ ul {
     text-align: left;
     vertical-align: middle;
     overflow: hidden;
-    background-color: #ff7e22;
+    background-color: #9B6DFF;
     padding: 0.5em;
     min-width: 2.5em;
     height: 2.5em;
@@ -170,7 +170,7 @@ ul {
 }
 
 .warningIcon {
-    color: #ff7e22;
+    color: #9B6DFF;
     width: 1em;
     height: 1em;
     position: absolute;
@@ -196,7 +196,7 @@ ul {
     height: 1.25em;
     font-size: 200%;
     display: block;
-    background: #ff7e22;
+    background: #9B6DFF;
     padding: 0;
     color: white;
 }
@@ -240,7 +240,7 @@ ul {
     display: inline-block;
     text-transform: uppercase;
     padding: 0.5em 0.5em 0.25em 0.5em;
-    border-bottom: 0.25em solid #ff7e22;
+    border-bottom: 0.25em solid #9B6DFF;
 }
 
 #views {
